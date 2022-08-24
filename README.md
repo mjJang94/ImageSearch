@@ -2,7 +2,7 @@
 
 평소에 관심 있던 혹은 직접 구현해보고 싶던 **Architecture, DI, Network**를 적용하여 구현해 보았습니다.
 
-구조적으로 완벽하진 못하더라도 계속해서 보완해 가며 적용하고 싶은 것들을 추가할 예정입니다.😄
+구현된 코드를 계속해서 보완하며 적용하고 싶은 것들을 추가할 예정입니다.😄
 
 **이미지 검색 API 가이드**  
 https://developers.naver.com/docs/serviceapi/search/image/image.md#%EC%9D%B4%EB%AF%B8%EC%A7%80
