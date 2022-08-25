@@ -3,8 +3,8 @@ package com.mj.domain
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.mj.data.ImageDataSource
-import com.mj.data.local.FavoriteImageEntity
-import com.mj.data.remote.model.ItemResponse
+import com.mj.data.model.FavoriteImageEntity
+import com.mj.data.model.ItemResponse
 import com.mj.domain.model.ThumbnailData
 import javax.inject.Inject
 
