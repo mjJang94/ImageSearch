@@ -1,7 +1,7 @@
 package com.mj.data.local
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.mj.data.model.FavoriteImageEntity
 
 @Dao
 interface FavoriteImageDao {

@@ -1,7 +1,6 @@
 package com.mj.data
 
-import androidx.lifecycle.LiveData
-import com.mj.data.local.FavoriteImageEntity
+import com.mj.data.model.FavoriteImageEntity
 import com.mj.data.remote.ImageSearchResponse
 
 interface ImageDataSource {

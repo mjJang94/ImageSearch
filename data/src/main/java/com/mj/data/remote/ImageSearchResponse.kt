@@ -1,6 +1,6 @@
 package com.mj.data.remote
 
-import com.mj.data.remote.model.ItemResponse
+import com.mj.data.model.ItemResponse
 
 data class ImageSearchResponse(
     val lastBuildDate: String,

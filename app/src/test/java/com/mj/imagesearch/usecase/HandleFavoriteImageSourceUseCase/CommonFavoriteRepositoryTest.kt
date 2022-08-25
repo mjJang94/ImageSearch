@@ -2,7 +2,7 @@ package com.mj.imagesearch.usecase.HandleFavoriteImageSourceUseCase
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import com.mj.data.local.FavoriteImageEntity
+import com.mj.data.model.FavoriteImageEntity
 import com.mj.domain.ImageRepository
 import com.mj.domain.model.ThumbnailData
 import com.mj.domain.usecase.HandleFavoriteImageSourceUseCase

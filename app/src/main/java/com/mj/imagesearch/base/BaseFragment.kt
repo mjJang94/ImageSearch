@@ -26,7 +26,7 @@ abstract class BaseFragment<T : ViewDataBinding, R : ViewModel> : Fragment() {
     }
 
     fun LifecycleOwner.repeatOnOwnerStarted(block: suspend CoroutineScope.() -> Unit) {
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED, block)
         }
     }

@@ -3,10 +3,9 @@ package com.mj.imagesearch.usecase.HandleFavoriteImageSourceUseCase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mj.data.local.FavoriteImageDao
-import com.mj.data.local.FavoriteImageEntity
+import com.mj.data.model.FavoriteImageEntity
 import com.mj.domain.model.ThumbnailData
 import com.mj.imagesearch.resource.getFavoriteMock
-import timber.log.Timber
 
 class FakeDatabase : FavoriteImageDao {
 

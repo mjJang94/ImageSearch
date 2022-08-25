@@ -1,8 +1,7 @@
 package com.mj.imagesearch.resource
 
-import com.mj.data.local.FavoriteImageEntity
 import com.mj.data.remote.ImageSearchResponse
-import com.mj.data.remote.model.ItemResponse
+import com.mj.data.model.ItemResponse
 import com.mj.domain.model.ThumbnailData
 
 val itemResponseMock = listOf(

@@ -1,4 +1,4 @@
-package com.mj.data.remote.model
+package com.mj.data.model
 
 import com.google.gson.annotations.SerializedName
 
