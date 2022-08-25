@@ -1,6 +1,6 @@
 package com.mj.imagesearch.usecase.HandleSearchImageSourceUseCase
 
-import com.mj.data.remote.ImageSearchResponse
+import com.mj.data.model.ImageSearchResponse
 import com.mj.data.remote.NaverImageSearchService
 import com.mj.imagesearch.resource.getImageMock
 

@@ -1,5 +1,6 @@
 package com.mj.data.remote
 
+import com.mj.data.model.ImageSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

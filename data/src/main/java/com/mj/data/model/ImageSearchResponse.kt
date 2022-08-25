@@ -1,4 +1,4 @@
-package com.mj.data.remote
+package com.mj.data.model
 
 import com.mj.data.model.ItemResponse
 

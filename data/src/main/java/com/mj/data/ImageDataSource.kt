@@ -2,7 +2,7 @@ package com.mj.data
 
 import androidx.lifecycle.LiveData
 import com.mj.data.model.FavoriteImageEntity
-import com.mj.data.remote.ImageSearchResponse
+import com.mj.data.model.ImageSearchResponse
 
 interface ImageDataSource {
     val allFavoriteImages: LiveData<List<FavoriteImageEntity>>
