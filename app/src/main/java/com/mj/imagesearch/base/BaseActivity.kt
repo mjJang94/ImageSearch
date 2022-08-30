@@ -8,8 +8,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseActivity<T : ViewDataBinding, V : ViewModel> : AppCompatActivity() {
+abstract class BaseActivity<T : ViewDataBinding, V : ViewModel> : AppCompatActivity(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = lifecycleScope.coroutineContext
 
     lateinit var binding: T
 
@@ -41,13 +44,13 @@ abstract class BaseActivity<T : ViewDataBinding, V : ViewModel> : AppCompatActiv
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
     fun LifecycleOwner.repeatOnCreated(block: suspend CoroutineScope.() -> Unit) {
-        lifecycleScope.launch {
+        launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED, block)
         }
     }
 
     fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
-        lifecycleScope.launch {
+        launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED, block)
         }
     }
