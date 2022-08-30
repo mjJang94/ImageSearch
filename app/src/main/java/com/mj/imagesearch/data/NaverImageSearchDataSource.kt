@@ -8,7 +8,7 @@ import java.lang.Exception
 
 class NaverImageSearchDataSource(
     private val query: String,
-    private val handleSearchImageUseCase : HandleSearchImageSourceUseCase
+    private val handleSearchImageUseCase: HandleSearchImageSourceUseCase
 ) : PagingSource<Int, ThumbnailData>() {
     override fun getRefreshKey(state: PagingState<Int, ThumbnailData>): Int? {
         return state.anchorPosition?.let {
@@ -22,17 +22,9 @@ class NaverImageSearchDataSource(
         val start = params.key ?: defaultStart
 
         return try {
-            val response = handleSearchImageUseCase.search(query , params.loadSize, start)
-            val nextKey = if (response.isEmpty()) {
-                null
-            } else {
-                start + params.loadSize
-            }
-            val prevKey = if (start == defaultStart) {
-                null
-            } else {
-                start - defaultDisplay
-            }
+            val response = handleSearchImageUseCase.search(query, 50, start)
+            val nextKey = if (response.isEmpty()) null else start + 1
+            val prevKey = if (start == defaultStart) null else start - defaultDisplay
             LoadResult.Page(response, prevKey, nextKey)
         } catch (exception: Exception) {
             LoadResult.Error(exception)

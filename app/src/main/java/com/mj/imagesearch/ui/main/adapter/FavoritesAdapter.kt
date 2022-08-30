@@ -5,7 +5,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mj.domain.model.ThumbnailData
 import com.mj.imagesearch.R
@@ -26,6 +28,13 @@ class FavoritesAdapter(
         }
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(context, 4)
+            itemAnimator = null
+        }
+    }
+
     override fun getItemCount(): Int {
         return currentList.size
     }
@@ -43,7 +52,6 @@ class FavoritesAdapter(
         BaseViewHolder<ThumbnailData>(binding.root) {
         override fun bind(item: ThumbnailData) {
             binding.data = item
-
             binding.imageView.setOnClickListener {
                 //리스트에서 삭제
                 unLike.invoke(item)
