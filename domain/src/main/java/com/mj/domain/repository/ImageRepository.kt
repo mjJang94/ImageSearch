@@ -1,4 +1,4 @@
-package com.mj.domain
+package com.mj.domain.repository
 
 import androidx.lifecycle.LiveData
 import com.mj.domain.model.ThumbnailData

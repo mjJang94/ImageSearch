@@ -3,9 +3,9 @@ package com.mj.imagesearch.usecase.HandleFavoriteImageSourceUseCase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.mj.data.model.FavoriteImageEntity
-import com.mj.domain.ImageRepository
+import com.mj.domain.repository.ImageRepository
 import com.mj.domain.model.ThumbnailData
-import com.mj.domain.usecase.HandleFavoriteImageSourceUseCase
+import com.mj.domain.usecase.GetLocalImageUseCase
 import com.mj.imagesearch.resource.getFavoriteMock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -44,7 +44,7 @@ class CommonFavoriteRepositoryTest {
 
     @Test
     fun `getAll() should return list of ThumbnailData from database`() = runTest {
-        val useCase = HandleFavoriteImageSourceUseCase(fakeRepo)
+        val useCase = GetLocalImageUseCase(fakeRepo)
 
         assertEquals(getFavoriteMock, useCase.getAll())
     }
@@ -52,7 +52,7 @@ class CommonFavoriteRepositoryTest {
     @Test
     fun `insert() should return true after insert data`() = runTest {
 
-        val useCase = HandleFavoriteImageSourceUseCase(fakeRepo)
+        val useCase = GetLocalImageUseCase(fakeRepo)
 
         val job = async {
             useCase.insert(ThumbnailData(0, "test_thumbnails"))
@@ -65,7 +65,7 @@ class CommonFavoriteRepositoryTest {
     @Test
     fun `delete() should return true after delete from database`() = runTest {
 
-        val useCase = HandleFavoriteImageSourceUseCase(fakeRepo)
+        val useCase = GetLocalImageUseCase(fakeRepo)
 
         val job = async {
             useCase.delete(ThumbnailData(0, "test_thumbnails"))

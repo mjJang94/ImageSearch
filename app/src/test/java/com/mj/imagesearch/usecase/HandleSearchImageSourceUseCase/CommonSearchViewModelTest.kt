@@ -4,10 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LoadState
-import com.mj.domain.ImageRepository
+import com.mj.domain.repository.ImageRepository
 import com.mj.domain.model.ThumbnailData
-import com.mj.domain.usecase.HandleFavoriteImageSourceUseCase
-import com.mj.domain.usecase.HandleSearchImageSourceUseCase
+import com.mj.domain.usecase.GetLocalImageUseCase
+import com.mj.domain.usecase.GetRemoteImageUseCase
 import com.mj.imagesearch.ui.main.CommonSearchViewModel
 import com.mj.imagesearch.ui.main.CommonSearchViewModel.*
 import com.mj.imagesearch.util.ReplaceMainDispatcherRule
@@ -65,8 +65,8 @@ class CommonSearchViewModelTest {
         val api = FakeSuccessApi()
 
         val viewModel = CommonSearchViewModel(
-            HandleFavoriteImageSourceUseCase(fakeRepo),
-            HandleSearchImageSourceUseCase(fakeRepo)
+            GetLocalImageUseCase(fakeRepo),
+            GetRemoteImageUseCase(fakeRepo)
         )
 
         observeViewModel(viewModel)
@@ -94,8 +94,8 @@ class CommonSearchViewModelTest {
     fun `should return Error when network request fails`() = runTest {
         val api = FakeErrorApi()
         val viewModel = CommonSearchViewModel(
-            HandleFavoriteImageSourceUseCase(fakeRepo),
-            HandleSearchImageSourceUseCase(fakeRepo)
+            GetLocalImageUseCase(fakeRepo),
+            GetRemoteImageUseCase(fakeRepo)
         )
 
         observeViewModel(viewModel)

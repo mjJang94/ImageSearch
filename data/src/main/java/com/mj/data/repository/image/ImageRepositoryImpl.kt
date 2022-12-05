@@ -1,36 +1,37 @@
-package com.mj.domain
+package com.mj.data.repository.image
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import com.mj.data.ImageDataSource
 import com.mj.data.model.FavoriteImageEntity
 import com.mj.data.model.ItemResponse
+import com.mj.data.repository.image.local.ImageLocalDataSource
+import com.mj.data.repository.image.remote.ImageRemoteDataSource
 import com.mj.domain.model.ThumbnailData
+import com.mj.domain.repository.ImageRepository
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
-    private val datasource: ImageDataSource
+    private val imageRemoteDataSource: ImageRemoteDataSource,
+    private val imageLocalDataSource: ImageLocalDataSource
 ) : ImageRepository {
 
-    override suspend fun getRemoteData(query: String, loadSize: Int, start: Int): List<ThumbnailData> =
-        datasource.getRemoteImages(query, loadSize, start).items.itemResponseToThumbnailList()
-
     override val favoriteImages: LiveData<List<ThumbnailData>>
-        get() = datasource.allFavoriteImages.map { data ->
+        get() = imageLocalDataSource.allFavoriteImages.map { data ->
             data.favoriteEntityToThumbnailList()
         }
 
     override suspend fun getFavoriteImages(): List<ThumbnailData> =
-        datasource.getAllFavoriteImages().favoriteEntityToThumbnailList()
+        imageLocalDataSource.getAllFavoriteImages().favoriteEntityToThumbnailList()
 
+    override suspend fun getRemoteData(query: String, loadSize: Int, start: Int): List<ThumbnailData> =
+        imageRemoteDataSource.getRemoteImages(query, loadSize, start).items.itemResponseToThumbnailList()
 
-    override suspend fun saveImages(data: ThumbnailData) {
-        datasource.saveImages(data.mapToFavoriteEntity())
-    }
+    override suspend fun saveImages(data: ThumbnailData) =
+        imageLocalDataSource.saveImages(data.mapToFavoriteEntity())
 
-    override suspend fun deleteImages(data: ThumbnailData) {
-        datasource.deleteImages(data.mapToFavoriteEntity())
-    }
+    override suspend fun deleteImages(data: ThumbnailData) =
+        imageLocalDataSource.deleteImages(data.mapToFavoriteEntity())
+
 
     private fun List<ItemResponse>.itemResponseToThumbnailList(): List<ThumbnailData> =
         this.map {

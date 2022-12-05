@@ -4,8 +4,8 @@ import androidx.paging.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.mj.domain.model.ThumbnailData
-import com.mj.domain.usecase.HandleFavoriteImageSourceUseCase
-import com.mj.domain.usecase.HandleSearchImageSourceUseCase
+import com.mj.domain.usecase.GetLocalImageUseCase
+import com.mj.domain.usecase.GetRemoteImageUseCase
 import com.mj.imagesearch.base.BaseViewModel
 import com.mj.imagesearch.data.NaverImageSearchDataSource
 import kotlinx.coroutines.launch
@@ -18,8 +18,8 @@ import timber.log.Timber
 
 @HiltViewModel
 class CommonSearchViewModel @Inject constructor(
-    private val handleFavoriteImageSourceUseCase: HandleFavoriteImageSourceUseCase,
-    private val handleSearchImageSourceUseCase: HandleSearchImageSourceUseCase
+    private val getLocalImageUseCase: GetLocalImageUseCase,
+    private val getRemoteImageUseCase: GetRemoteImageUseCase
 ) : BaseViewModel<CommonSearchViewModel.SearchUIEvent>(){
 
     private val queryFlow = MutableSharedFlow<String>()
@@ -32,7 +32,7 @@ class CommonSearchViewModel @Inject constructor(
         }
         .cachedIn(this)
 
-    val favoritesFlow = handleFavoriteImageSourceUseCase.favoriteImages
+    val favoritesFlow = getLocalImageUseCase.favoriteImages
 
     private fun searchImages(query: String): Flow<PagingData<ThumbnailData>> =
         loadRemoteSearchImages(query)
@@ -78,18 +78,18 @@ class CommonSearchViewModel @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                NaverImageSearchDataSource(query, handleSearchImageSourceUseCase)
+                NaverImageSearchDataSource(query, getRemoteImageUseCase)
             }
         ).flow
     }
 
     private suspend fun saveFavoriteImage(data: ThumbnailData) {
-        handleFavoriteImageSourceUseCase.insert(data)
+        getLocalImageUseCase.insert(data)
         Timber.d("save thumbnail : $data")
     }
 
     private suspend fun deleteFavoriteImage(data: ThumbnailData) {
-        handleFavoriteImageSourceUseCase.delete(data)
+        getLocalImageUseCase.delete(data)
         Timber.d("delete thumbnail : $data")
     }
 

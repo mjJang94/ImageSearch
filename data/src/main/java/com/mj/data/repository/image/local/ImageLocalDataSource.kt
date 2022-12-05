@@ -1,13 +1,11 @@
-package com.mj.data
+package com.mj.data.repository.image.local
 
 import androidx.lifecycle.LiveData
 import com.mj.data.model.FavoriteImageEntity
-import com.mj.data.model.ImageSearchResponse
 
-interface ImageDataSource {
+interface ImageLocalDataSource {
     val allFavoriteImages: LiveData<List<FavoriteImageEntity>>
     suspend fun getAllFavoriteImages(): List<FavoriteImageEntity>
-    suspend fun getRemoteImages(query: String, loadSize: Int, start: Int): ImageSearchResponse
     suspend fun saveImages(data: FavoriteImageEntity)
     suspend fun deleteImages(data: FavoriteImageEntity)
 }

@@ -34,8 +34,6 @@ android {
 
 dependencies {
 
-    implementation(project(":data"))
-
     implementation ("androidx.core:core-ktx:${Versions.CORE}")
     implementation ("androidx.appcompat:appcompat:${Versions.APP_COMPAT}")
     implementation ("com.google.android.material:material:${Versions.MATERIAL}")
