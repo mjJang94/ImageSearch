@@ -3,6 +3,7 @@ package com.mj.imagesearch.ui.main
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenCreated
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mj.imagesearch.R
 import com.mj.imagesearch.base.BaseFragment
@@ -37,17 +38,21 @@ class ImageSearchFragment : BaseFragment<FragmentSearchBinding, CommonSearchView
          * lifecycleScope - fragment 의 lifecycle 을 따름
          * viewLifecycleScope.lifecycleScope - fragment owner 의 라이프 사이클을 따름
          */
-        launch {
-            viewModel.pagingDataFlow
-                .collectLatest { items ->
-                    adapter.submitData(items)
-                }
-        }
 
-        launch {
-            adapter.loadStateFlow.collectLatest { loadState ->
-                Timber.d("loadStateFlow : ${loadState.refresh}")
-                viewModel.setUIState(loadState.refresh)
+        launch(Dispatchers.Default) {
+            whenCreated {
+                viewModel.pagingDataFlow
+                    .collectLatest { items ->
+                        Timber.e("items:$items")
+                        adapter.submitData(items)
+                    }
+            }
+
+            whenCreated {
+                adapter.loadStateFlow.collectLatest { loadState ->
+                    Timber.d("loadStateFlow : ${loadState.refresh}")
+                    viewModel.setUIState(loadState.refresh)
+                }
             }
         }
 

@@ -10,9 +10,8 @@ import com.mj.imagesearch.base.BaseViewModel
 import com.mj.imagesearch.data.NaverImageSearchDataSource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 
@@ -26,11 +25,11 @@ class CommonSearchViewModel @Inject constructor(
     /**
      * flatMapLatest - 검색도중 유저가 다른 검색어로 검색을 시도한 경우 다른 검색어 적용을 위해 선택
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     val pagingDataFlow = queryFlow
         .flatMapLatest {
             searchImages(it)
-        }
-        .cachedIn(this)
+        }.flowOn(Dispatchers.Default).cachedIn(this)
 
     val favoritesFlow = getLocalImageUseCase.favoriteImages
 
