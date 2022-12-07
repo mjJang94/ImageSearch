@@ -1,11 +1,10 @@
 package com.mj.data.repository.image.local
 
-import androidx.lifecycle.LiveData
 import com.mj.data.model.FavoriteImageEntity
+import kotlinx.coroutines.flow.Flow
 
 interface ImageLocalDataSource {
-    val allFavoriteImages: LiveData<List<FavoriteImageEntity>>
-    suspend fun getAllFavoriteImages(): List<FavoriteImageEntity>
+    suspend fun getAllFavoriteImages(): Flow<List<FavoriteImageEntity>>
     suspend fun saveImages(data: FavoriteImageEntity)
     suspend fun deleteImages(uid: Long)
 }

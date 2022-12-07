@@ -1,18 +1,21 @@
 package com.mj.data.repository.image.local
 
-import androidx.lifecycle.LiveData
 import com.mj.data.local.FavoriteImageDao
 import com.mj.data.model.FavoriteImageEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
 internal class ImageLocalDataSourceImpl @Inject constructor(private val imageDao: FavoriteImageDao) :
     ImageLocalDataSource {
 
-    override val allFavoriteImages: LiveData<List<FavoriteImageEntity>>
-        get() = imageDao.getAllFavoriteImagesLive()
-
-    override suspend fun getAllFavoriteImages(): List<FavoriteImageEntity> =
-        imageDao.getAllFavoriteImages()
+    override suspend fun getAllFavoriteImages(): Flow<List<FavoriteImageEntity>> =
+        flow {
+            emit(imageDao.getAllFavoriteImages())
+        }
 
     override suspend fun saveImages(data: FavoriteImageEntity) {
         imageDao.insert(data)

@@ -16,5 +16,9 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding, FavoriteViewModel
 
     override fun initOnCreateView() {
         binding.vm = viewModel
+
+        repeatOnOwnerStarted {
+            viewModel.emitData()
+        }
     }
 }
