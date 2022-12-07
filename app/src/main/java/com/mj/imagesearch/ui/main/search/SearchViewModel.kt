@@ -1,27 +1,37 @@
-package com.mj.imagesearch.ui.main
+package com.mj.imagesearch.ui.main.search
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import com.mj.domain.model.ThumbnailData
 import com.mj.domain.usecase.GetLocalImageUseCase
 import com.mj.domain.usecase.GetRemoteImageUseCase
-import com.mj.imagesearch.base.BaseViewModel
 import com.mj.imagesearch.data.NaverImageSearchDataSource
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
-
+import java.util.concurrent.atomic.AtomicReference
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class CommonSearchViewModel @Inject constructor(
-    private val getLocalImageUseCase: GetLocalImageUseCase,
-    private val getRemoteImageUseCase: GetRemoteImageUseCase
-) : BaseViewModel<CommonSearchViewModel.SearchUIEvent>(){
+class SearchViewModel @Inject constructor(
+    private val getRemoteImageUseCase: GetRemoteImageUseCase,
+    private val getLocalImageUseCase: GetLocalImageUseCase
+) : ViewModel(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = viewModelScope.coroutineContext
 
     private val queryFlow = MutableSharedFlow<String>()
+
+    private val _eventFlow = MutableSharedFlow<SearchUIEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+    val eventStateForTest = _eventFlow.asLiveData()
+
     /**
      * flatMapLatest - 검색도중 유저가 다른 검색어로 검색을 시도한 경우 다른 검색어 적용을 위해 선택
      */
@@ -31,41 +41,40 @@ class CommonSearchViewModel @Inject constructor(
             searchImages(it)
         }.flowOn(Dispatchers.Default).cachedIn(this)
 
-    val favoritesFlow = getLocalImageUseCase.favoriteImages
+    val keyword = MutableLiveData<String>()
+
+    fun search() {
+        val query = keyword.value?.trim() ?: return
+        launch(Dispatchers.Default) {
+            handleQuery(query)
+        }
+    }
+
+    fun toggle(item: ThumbnailData) {
+        launch(Dispatchers.IO) {
+            saveFavoriteImage(item)
+        }
+    }
 
     private fun searchImages(query: String): Flow<PagingData<ThumbnailData>> =
         loadRemoteSearchImages(query)
 
-    fun handleQuery(query: String) {
+    private fun handleQuery(query: String) {
         launch {
             queryFlow.emit(query)
         }
     }
 
-    fun toggle(type: ToggleType, item: ThumbnailData) {
-        launch(Dispatchers.IO) {
-            when (type) {
-                ToggleType.LIKE -> {
-                    saveFavoriteImage(item)
-                }
-
-                ToggleType.DISLIKE -> {
-                    deleteFavoriteImage(item)
-                }
-            }
-        }
-    }
-
-    fun setUIState(state: LoadState) {
+    suspend fun setUIState(state: LoadState) {
         when (state) {
             is LoadState.Loading -> {
-                triggerEvent(SearchUIEvent.Loading)
+                _eventFlow.emit(SearchUIEvent.Loading)
             }
             is LoadState.Error -> {
-                triggerEvent(SearchUIEvent.Error(state.error.message ?: "Network Request failed!"))
+                _eventFlow.emit(SearchUIEvent.Error(state.error.message ?: "Network Request failed!"))
             }
             else -> {
-                triggerEvent(SearchUIEvent.NotLoading)
+                _eventFlow.emit(SearchUIEvent.NotLoading)
             }
         }
     }
@@ -87,18 +96,9 @@ class CommonSearchViewModel @Inject constructor(
         Timber.d("save thumbnail : $data")
     }
 
-    private suspend fun deleteFavoriteImage(data: ThumbnailData) {
-        getLocalImageUseCase.delete(data)
-        Timber.d("delete thumbnail : $data")
-    }
-
     sealed class SearchUIEvent {
         data class Error(val msg: String) : SearchUIEvent()
         object Loading : SearchUIEvent()
         object NotLoading : SearchUIEvent()
-    }
-
-    enum class ToggleType {
-        LIKE, DISLIKE
     }
 }

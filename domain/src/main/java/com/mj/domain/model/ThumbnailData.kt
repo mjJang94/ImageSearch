@@ -1,6 +1,6 @@
 package com.mj.domain.model
 
 data class ThumbnailData(
-    val uid: Int = 0,
+    val uid: Long = 0L,
     val thumbnail: String
 )

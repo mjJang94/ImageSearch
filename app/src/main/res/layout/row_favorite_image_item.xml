@@ -3,20 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
-            name="data"
-            type="com.mj.domain.model.ThumbnailData" />
+            name="callback"
+            type="com.mj.imagesearch.ui.main.favorite.FavoritesAdapter.FavoriteCallback" />
+
+        <variable
+            name="item"
+            type="com.mj.imagesearch.ui.main.favorite.FavoritesAdapter.Item" />
     </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> callback.toggle(item)}"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            app:thumbnailUrl="@{data}"/>
-
+            app:thumbnailUrl="@{item.thumbnail}" />
     </LinearLayout>
 </layout>

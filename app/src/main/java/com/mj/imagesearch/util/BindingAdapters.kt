@@ -1,5 +1,8 @@
 package com.mj.imagesearch.util
 
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -11,12 +14,12 @@ object BindingAdapters {
 
     @JvmStatic
     @BindingAdapter("thumbnailUrl")
-    fun AppCompatImageView.setListThumbnailUrl(data: ThumbnailData?) {
-        if (data == null){
+    fun AppCompatImageView.setListThumbnailUrl(url: String?) {
+        if (url == null) {
             setImageResource(R.drawable.ic_baseline_browser_not_supported_24)
-        }else{
+        } else {
             Glide.with(context)
-                .load(data.thumbnail)
+                .load(url)
                 .error(R.drawable.ic_baseline_browser_not_supported_24)
                 .centerCrop()
                 /**
@@ -28,6 +31,34 @@ object BindingAdapters {
                  */
                 .format(DecodeFormat.PREFER_RGB_565)
                 .into(this)
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("visible")
+    fun View.setVisibility(visible: Boolean?) {
+        if (visible == null) return
+
+        val visibility = when (visible) {
+            true -> View.VISIBLE
+            else -> View.GONE
+        }
+
+        this.visibility = visibility
+    }
+
+    @JvmStatic
+    @BindingAdapter("searchAction")
+    fun EditText.setSearchActionEvent(event : () -> Unit?){
+
+        setOnEditorActionListener { _, id, _ ->
+            var handled = false
+
+            if (id == EditorInfo.IME_ACTION_SEARCH){
+                event.invoke()
+                handled = true
+            }
+            return@setOnEditorActionListener handled
         }
     }
 }

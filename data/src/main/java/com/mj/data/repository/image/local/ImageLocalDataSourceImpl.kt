@@ -18,7 +18,7 @@ internal class ImageLocalDataSourceImpl @Inject constructor(private val imageDao
         imageDao.insert(data)
     }
 
-    override suspend fun deleteImages(data: FavoriteImageEntity) {
-        imageDao.delete(data)
+    override suspend fun deleteImages(uid: Long) {
+        imageDao.delete(uid)
     }
 }

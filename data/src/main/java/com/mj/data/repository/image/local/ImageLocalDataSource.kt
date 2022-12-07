@@ -7,5 +7,5 @@ interface ImageLocalDataSource {
     val allFavoriteImages: LiveData<List<FavoriteImageEntity>>
     suspend fun getAllFavoriteImages(): List<FavoriteImageEntity>
     suspend fun saveImages(data: FavoriteImageEntity)
-    suspend fun deleteImages(data: FavoriteImageEntity)
+    suspend fun deleteImages(uid: Long)
 }

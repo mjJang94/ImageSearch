@@ -29,8 +29,8 @@ class ImageRepositoryImpl @Inject constructor(
     override suspend fun saveImages(data: ThumbnailData) =
         imageLocalDataSource.saveImages(data.mapToFavoriteEntity())
 
-    override suspend fun deleteImages(data: ThumbnailData) =
-        imageLocalDataSource.deleteImages(data.mapToFavoriteEntity())
+    override suspend fun deleteImages(uid: Long) =
+        imageLocalDataSource.deleteImages(uid)
 
 
     private fun List<ItemResponse>.itemResponseToThumbnailList(): List<ThumbnailData> =

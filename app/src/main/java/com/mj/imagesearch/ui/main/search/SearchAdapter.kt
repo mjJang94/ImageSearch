@@ -1,4 +1,4 @@
-package com.mj.imagesearch.ui.main.adapter
+package com.mj.imagesearch.ui.main.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,18 +8,17 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.mj.domain.model.ThumbnailData
 import com.mj.imagesearch.R
 import com.mj.imagesearch.base.BaseViewHolder
-import com.mj.imagesearch.databinding.ImageSearchItemBinding
+import com.mj.imagesearch.databinding.RowSearchImageItemBinding
 
-class ImageSearchAdapter(
+class SearchAdapter(
     private val like: (ThumbnailData) -> Unit
-) : PagingDataAdapter<ThumbnailData, ImageSearchAdapter.SearchViewHolder>(comparator) {
+) : PagingDataAdapter<ThumbnailData, SearchAdapter.SearchViewHolder>(comparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        return SearchViewHolder(viewBind(parent, R.layout.image_search_item))
+        return SearchViewHolder(viewBind(parent, R.layout.row_search_image_item))
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
@@ -59,10 +58,10 @@ class ImageSearchAdapter(
         )
     }
 
-    inner class SearchViewHolder(private val binding: ImageSearchItemBinding) :
+    inner class SearchViewHolder(private val binding: RowSearchImageItemBinding) :
         BaseViewHolder<ThumbnailData>(binding.root) {
         override fun bind(item: ThumbnailData) {
-            binding.data = item
+            binding.item = item
             binding.imageView.setOnClickListener {
                 like.invoke(item)
             }

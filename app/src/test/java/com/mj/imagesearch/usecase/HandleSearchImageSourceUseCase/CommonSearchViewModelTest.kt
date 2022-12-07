@@ -8,8 +8,10 @@ import com.mj.domain.repository.ImageRepository
 import com.mj.domain.model.ThumbnailData
 import com.mj.domain.usecase.GetLocalImageUseCase
 import com.mj.domain.usecase.GetRemoteImageUseCase
-import com.mj.imagesearch.ui.main.CommonSearchViewModel
-import com.mj.imagesearch.ui.main.CommonSearchViewModel.*
+import com.mj.imagesearch.ui.main.MainViewModel
+import com.mj.imagesearch.ui.main.MainViewModel.*
+import com.mj.imagesearch.ui.main.search.SearchViewModel
+import com.mj.imagesearch.ui.main.search.SearchViewModel.*
 import com.mj.imagesearch.util.ReplaceMainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
@@ -29,7 +31,7 @@ class CommonSearchViewModelTest {
     @get: Rule
     val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
-    private val receivedUIStates = mutableListOf<UIEvent>()
+    private val receivedUIStates = mutableListOf<SearchUIEvent>()
 
     private val fakeRepo = object : ImageRepository {
 
@@ -49,8 +51,8 @@ class CommonSearchViewModelTest {
             Timber.d("mock saveImages() : $data")
         }
 
-        override suspend fun deleteImages(data: ThumbnailData) {
-            Timber.d("mock saveImages() : $data")
+        override suspend fun deleteImages(uid: Long) {
+            Timber.d("mock saveImages() : $uid")
         }
     }
 
@@ -64,27 +66,27 @@ class CommonSearchViewModelTest {
 
         val api = FakeSuccessApi()
 
-        val viewModel = CommonSearchViewModel(
-            GetLocalImageUseCase(fakeRepo),
-            GetRemoteImageUseCase(fakeRepo)
+        val searchViewModel = SearchViewModel(
+            GetRemoteImageUseCase(fakeRepo),
+            GetLocalImageUseCase(fakeRepo)
         )
 
-        observeViewModel(viewModel)
+        observeViewModel(searchViewModel)
 
         assertTrue(receivedUIStates.isEmpty())
 
-        viewModel.setUIState(LoadState.Loading)
+        searchViewModel.setUIState(LoadState.Loading)
         try {
             api.getImages(QUERY)
-            viewModel.setUIState(LoadState.NotLoading(false))
+            searchViewModel.setUIState(LoadState.NotLoading(false))
         } catch (exception: Exception) {
-            viewModel.setUIState(LoadState.Error(exception))
+            searchViewModel.setUIState(LoadState.Error(exception))
         }
 
         assertEquals(
             mutableListOf(
-                UIEvent.Loading,
-                UIEvent.NotLoading
+                SearchUIEvent.Loading,
+                SearchUIEvent.NotLoading
             ),
             receivedUIStates
         )
@@ -93,34 +95,34 @@ class CommonSearchViewModelTest {
     @Test
     fun `should return Error when network request fails`() = runTest {
         val api = FakeErrorApi()
-        val viewModel = CommonSearchViewModel(
-            GetLocalImageUseCase(fakeRepo),
-            GetRemoteImageUseCase(fakeRepo)
+        val searchViewModel = SearchViewModel(
+            GetRemoteImageUseCase(fakeRepo),
+            GetLocalImageUseCase(fakeRepo)
         )
 
-        observeViewModel(viewModel)
+        observeViewModel(searchViewModel)
 
         assertTrue(receivedUIStates.isEmpty())
 
-        viewModel.setUIState(LoadState.Loading)
+        searchViewModel.setUIState(LoadState.Loading)
         try {
             api.getImages(QUERY)
-            viewModel.setUIState(LoadState.NotLoading(false))
+            searchViewModel.setUIState(LoadState.NotLoading(false))
         } catch (exception: Exception) {
-            viewModel.setUIState(LoadState.Error(exception))
+            searchViewModel.setUIState(LoadState.Error(exception))
         }
 
         assertEquals(
             mutableListOf(
-                UIEvent.Loading,
-                UIEvent.Error(ERROR_MSG)
+                SearchUIEvent.Loading,
+                SearchUIEvent.Error(ERROR_MSG)
             ),
             receivedUIStates
         )
     }
 
-    private fun observeViewModel(viewModel: CommonSearchViewModel) {
-        viewModel.testState.observeForever { uiEvent ->
+    private fun observeViewModel(viewModel: SearchViewModel) {
+        viewModel.eventStateForTest.observeForever { uiEvent ->
             if (uiEvent != null) {
                 receivedUIStates.add(uiEvent)
             }

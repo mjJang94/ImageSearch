@@ -15,7 +15,7 @@ class GetLocalImageUseCase @Inject constructor(private val repository: ImageRepo
         repository.saveImages(data)
     }
 
-    suspend fun delete(data: ThumbnailData) {
-        repository.deleteImages(data)
+    suspend fun delete(uid: Long) {
+        repository.deleteImages(uid)
     }
 }

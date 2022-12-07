@@ -1,12 +1,17 @@
 package com.mj.imagesearch.util
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.get
+import com.google.android.material.tabs.TabLayout
 
 fun Context?.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) =
     this?.let { Toast.makeText(it, text, duration).show() }
@@ -36,6 +41,12 @@ fun logWithThreadAndCoroutineInfo(message: String) =
     println("[${Thread.currentThread().name}] $message")
 
 fun addCoroutineDebugInfo(message: String) = "[${Thread.currentThread().name}] $message"
+
+@Suppress("INACCESSIBLE_TYPE")
+fun TabLayout.Tab.setTypeface(tf: Typeface?, style: Int) {
+    val text = (view as? ViewGroup)?.get(1) as? TextView ?: return
+    text.setTypeface(tf ?: text.typeface, style)
+}
 
 /**
  * From kotlinextensions.com

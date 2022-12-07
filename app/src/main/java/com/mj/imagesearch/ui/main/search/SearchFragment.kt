@@ -1,38 +1,33 @@
-package com.mj.imagesearch.ui.main
+package com.mj.imagesearch.ui.main.search
 
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenCreated
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.viewModels
 import com.mj.imagesearch.R
 import com.mj.imagesearch.base.BaseFragment
 import com.mj.imagesearch.databinding.FragmentSearchBinding
-import com.mj.imagesearch.ui.main.CommonSearchViewModel.*
-import com.mj.imagesearch.ui.main.CommonSearchViewModel.ToggleType.LIKE
-import com.mj.imagesearch.ui.main.adapter.ImageSearchAdapter
+import com.mj.imagesearch.ui.main.search.SearchViewModel.SearchUIEvent
 import com.mj.imagesearch.util.hideKeyboard
 import com.mj.imagesearch.util.setGone
 import com.mj.imagesearch.util.setVisible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
-class ImageSearchFragment : BaseFragment<FragmentSearchBinding, CommonSearchViewModel>() {
+@AndroidEntryPoint
+class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>() {
 
     override val layoutResourceId: Int
         get() = R.layout.fragment_search
 
-    override val viewModel: CommonSearchViewModel by activityViewModels()
-
-    private val adapter: ImageSearchAdapter = ImageSearchAdapter {
-        viewModel.toggle(LIKE, it)
-    }
+    override val viewModel: SearchViewModel by viewModels()
 
     override fun initOnCreateView() {
-        initView()
+        binding.vm = viewModel
+
+        val adapter = SearchAdapter { viewModel.toggle(it) }
+        binding.rcySearch.adapter = adapter
 
         /**
          * lifecycleScope - fragment 의 lifecycle 을 따름
@@ -40,19 +35,16 @@ class ImageSearchFragment : BaseFragment<FragmentSearchBinding, CommonSearchView
          */
 
         launch(Dispatchers.Default) {
-            whenCreated {
-                viewModel.pagingDataFlow
-                    .collectLatest { items ->
-                        Timber.e("items:$items")
-                        adapter.submitData(items)
-                    }
+            viewModel.pagingDataFlow.collectLatest { items ->
+                Timber.e("items:$items")
+                adapter.submitData(items)
             }
+        }
 
-            whenCreated {
-                adapter.loadStateFlow.collectLatest { loadState ->
-                    Timber.d("loadStateFlow : ${loadState.refresh}")
-                    viewModel.setUIState(loadState.refresh)
-                }
+        launch {
+            adapter.loadStateFlow.collectLatest { loadState ->
+                Timber.d("loadStateFlow : ${loadState.refresh}")
+                viewModel.setUIState(loadState.refresh)
             }
         }
 
@@ -69,28 +61,11 @@ class ImageSearchFragment : BaseFragment<FragmentSearchBinding, CommonSearchView
         }
     }
 
-    private fun initView() = with(binding) {
-        recyclerView.adapter = adapter
-        search.setOnClickListener {
-            val query = binding.editText.text.trim().toString()
-            viewModel.handleQuery(query)
-        }
-    }
-
     private fun handleUIEvent(event: SearchUIEvent) {
         when (event) {
-            is SearchUIEvent.Loading -> {
-                onLoad()
-            }
-
-            is SearchUIEvent.Error -> {
-                onError(event.msg)
-            }
-
-            is SearchUIEvent.NotLoading -> {
-                onSuccess()
-            }
-
+            is SearchUIEvent.Loading -> onLoad()
+            is SearchUIEvent.Error -> onError(event.msg)
+            is SearchUIEvent.NotLoading -> onSuccess()
         }
     }
 

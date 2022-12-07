@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.main.ImageSearchFragment">
+    tools:context=".ui.main.search.SearchFragment">
 
     <data>
         <variable
             name="vm"
-            type="com.mj.imagesearch.ui.main.CommonSearchViewModel" />
+            type="com.mj.imagesearch.ui.main.search.SearchViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,25 +32,22 @@
 
                 <EditText
                     android:id="@+id/editText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3" />
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:imeActionLabel="검색"
+                    android:hint="검색어를 입력하세요"
+                    android:text="@={vm.keyword}"
+                    app:searchAction="@{() -> vm.search()}"/>
 
-                <Button
-                    android:id="@+id/search"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:text="검색"
-                    tools:text="검색"/>
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/rcy_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/image_search_item"
+                tools:listitem="@layout/row_search_image_item"
                 tools:itemCount="30"/>
         </LinearLayout>
 
