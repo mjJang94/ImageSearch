@@ -37,8 +37,8 @@ class CommonFavoriteRepositoryTest {
             fakeDatabase.insert(FavoriteImageEntity(0, data.thumbnail))
         }
 
-        override suspend fun deleteImages(data: ThumbnailData) {
-            fakeDatabase.delete(FavoriteImageEntity(0, data.thumbnail))
+        override suspend fun deleteImages(uid: Long) {
+            fakeDatabase.delete(uid)
         }
     }
 
@@ -68,7 +68,7 @@ class CommonFavoriteRepositoryTest {
         val useCase = GetLocalImageUseCase(fakeRepo)
 
         val job = async {
-            useCase.delete(ThumbnailData(0, "test_thumbnails"))
+            useCase.delete(0)
         }
         job.await()
 

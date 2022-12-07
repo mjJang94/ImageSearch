@@ -24,7 +24,7 @@ class FakeDatabase : FavoriteImageDao {
         insertedToDb = true
     }
 
-    override suspend fun delete(favoriteImageEntity: FavoriteImageEntity) {
+    override suspend fun delete(uid: Long) {
         deleteFromDb = true
     }
 
