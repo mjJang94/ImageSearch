@@ -24,8 +24,7 @@ class FavoriteViewModel @Inject constructor(
     private val _favoritesItems = MutableLiveData<List<FavoritesAdapter.Item>>()
     val favoritesItems = _favoritesItems.hide()
 
-    private val _isEmpty = MutableLiveData<Boolean>()
-    val isEmpty = _isEmpty.hide()
+    val isEmpty = _favoritesItems.map { it.isEmpty() }
 
     val callback = object : FavoriteCallback {
         override fun toggle(data: FavoritesAdapter.Item) {
@@ -42,18 +41,15 @@ class FavoriteViewModel @Inject constructor(
             .onCompletion { Timber.d("favorite flow complete") }
             .catch { Timber.e("favorite flow error") }
             .collect { favorites ->
-                if (favorites.isEmpty()) _isEmpty.postValue(true)
                 Timber.d("favorite size : ${favorites.size}")
                 val item = favorites.map { it.formalize() }
                 _favoritesItems.postValue(item)
-                _isEmpty.postValue(false)
             }
     }
 
     private suspend fun deleteFavoriteImage(uid: Long) {
         getLocalImageUseCase.delete(uid)
         Timber.d("delete thumbnail : $uid")
-        emitData()
     }
 
     private fun ThumbnailData.formalize(): FavoritesAdapter.Item =

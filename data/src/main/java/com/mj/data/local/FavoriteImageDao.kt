@@ -14,7 +14,7 @@ interface FavoriteImageDao {
     suspend fun insert(favoriteImageEntity: FavoriteImageEntity)
 
     @Query("select * from favorite_image")
-    fun getAllFavoriteImages(): List<FavoriteImageEntity>
+    fun getAllFavoriteImages(): Flow<List<FavoriteImageEntity>>
 
     @Query("delete from favorite_image where uid = :uid")
     suspend fun delete(uid: Long)
