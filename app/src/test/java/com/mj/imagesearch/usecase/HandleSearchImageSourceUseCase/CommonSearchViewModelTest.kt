@@ -14,6 +14,8 @@ import com.mj.imagesearch.ui.main.search.SearchViewModel
 import com.mj.imagesearch.ui.main.search.SearchViewModel.*
 import com.mj.imagesearch.util.ReplaceMainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import kotlinx.coroutines.test.runTest
@@ -35,12 +37,9 @@ class CommonSearchViewModelTest {
 
     private val fakeRepo = object : ImageRepository {
 
-        override val favoriteImages: LiveData<List<ThumbnailData>>
-            get() = MutableLiveData(emptyList())
-
-        override suspend fun getFavoriteImages(): List<ThumbnailData> {
+        override suspend fun getFavoriteImages(): Flow<List<ThumbnailData>> {
             Timber.d("mock getFavoriteImages()")
-            return emptyList()
+            return emptyFlow()
         }
 
         override suspend fun getRemoteData(query: String, loadSize: Int, start: Int): List<ThumbnailData> {

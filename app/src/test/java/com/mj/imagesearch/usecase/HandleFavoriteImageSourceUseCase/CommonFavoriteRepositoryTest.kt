@@ -1,14 +1,15 @@
 package com.mj.imagesearch.usecase.HandleFavoriteImageSourceUseCase
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import com.mj.data.model.FavoriteImageEntity
-import com.mj.domain.repository.ImageRepository
 import com.mj.domain.model.ThumbnailData
+import com.mj.domain.repository.ImageRepository
 import com.mj.domain.usecase.GetLocalImageUseCase
 import com.mj.imagesearch.resource.getFavoriteMock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -20,13 +21,12 @@ class CommonFavoriteRepositoryTest {
 
     private val fakeRepo = object : ImageRepository {
 
-        override val favoriteImages: LiveData<List<ThumbnailData>>
-            get() = fakeDatabase.getAllFavoriteImagesLive().map {
-                it.mapToThumbnailData()
+        override suspend fun getFavoriteImages(): Flow<List<ThumbnailData>> {
+            return flow {
+                fakeDatabase.getAllFavoriteImages().collect {
+                    emit(it.mapToThumbnailData())
+                }
             }
-
-        override suspend fun getFavoriteImages(): List<ThumbnailData> {
-            return fakeDatabase.getAllFavoriteImages().mapToThumbnailData()
         }
 
         override suspend fun getRemoteData(query: String, loadSize: Int, start: Int): List<ThumbnailData> {
@@ -45,8 +45,9 @@ class CommonFavoriteRepositoryTest {
     @Test
     fun `getAll() should return list of ThumbnailData from database`() = runTest {
         val useCase = GetLocalImageUseCase(fakeRepo)
-
-        assertEquals(getFavoriteMock, useCase.getAll())
+        useCase.getAll().collect {
+            assertEquals(getFavoriteMock, it)
+        }
     }
 
     @Test
